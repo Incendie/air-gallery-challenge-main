@@ -14,11 +14,10 @@ const Assets = () => {
 
   const getAssets = useCallback(
     async (cursor: string | null) => {
-      console.log({ isFetching });
       if (!isFetching) {
         const { data, pagination } = await fetchAssets({ cursor });
         setIsFetching(false);
-        console.log({ data, pagination, cursor });
+
         if (data?.total) {
           setBoardAssets(prev => [...prev, ...data.clips]);
           setTotal(data.total);
@@ -30,35 +29,43 @@ const Assets = () => {
     [isFetching]
   );
 
+  // Fetch on infinite load w/intersection observer
   useEffect(() => {
-    console.log(boardAssets.length);
     if (isBottomVisible && cursor && total) {
-      console.log("get", { cursor });
-      setIsFetching(true);
       getAssets(cursor);
-    } else if (!boardAssets.length) {
-      console.log("init fetch");
-      setIsFetching(true);
-      getAssets(null);
     }
-  }, [boardAssets.length, cursor, getAssets, isBottomVisible, total]);
+  }, [
+    boardAssets.length,
+    cursor,
+    getAssets,
+    isBottomVisible,
+    isFetching,
+    total,
+  ]);
 
+  // Used for infinite load
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
-      console.log(entry);
-      setIsBottomVisible(entry.isVisible);
+      console.log({ entry });
+      setIsBottomVisible(entry.isIntersecting);
     });
 
+    console.log({ bottomRef }.bottomRef.current);
     if (bottomRef.current) {
+      console.log("obs");
       observer.observe(bottomRef.current);
     }
 
     return () => observer.disconnect();
   }, []);
 
+  // Init Fetch
   useEffect(() => {
-    console.log("boardAssets.length", boardAssets.length);
-  }, [boardAssets.length]);
+    if (!boardAssets.length) {
+      setIsFetching(true);
+      getAssets(null);
+    }
+  }, [boardAssets.length, getAssets]);
 
   return (
     <div className="Assets">
@@ -73,16 +80,15 @@ const Assets = () => {
                     duration={duration}
                     key={assetId}
                     isVideo={ext === "mp4"}
-                    previewVideo={assets.previewVideo}
+                    previewVideo={assets.previewVideo ?? ""}
                     thumbnail={assets.image}
                     title={displayName}
-                    hover
                   />
                 );
               }
             )}
           </ul>
-          <div ref={bottomRef} />
+          <div className="bottom" ref={bottomRef} />
         </div>
       )}
     </div>

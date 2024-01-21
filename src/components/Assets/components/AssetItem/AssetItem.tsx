@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 
 interface IAssetItem {
   duration?: number;
-  id: string;
   isVideo: boolean;
   previewVideo: string;
   thumbnail: string;
