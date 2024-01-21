@@ -10,12 +10,12 @@ const Boards = () => {
   useEffect(() => {
     const getBoards = async () => {
       const { data } = await fetchBoards();
-      console.log(data);
-      if (data) setBoards(data);
+
+      if (Object.keys(data).length) setBoards(data);
     };
 
-    getBoards();
-  }, []);
+    if (!boards.length) getBoards();
+  }, [boards.length]);
 
   return (
     <div className="Boards">

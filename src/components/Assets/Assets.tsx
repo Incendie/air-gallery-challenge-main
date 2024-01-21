@@ -46,13 +46,10 @@ const Assets = () => {
   // Used for infinite load
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
-      console.log({ entry });
       setIsBottomVisible(entry.isIntersecting);
     });
 
-    console.log({ bottomRef }.bottomRef.current);
     if (bottomRef.current) {
-      console.log("obs");
       observer.observe(bottomRef.current);
     }
 
@@ -74,7 +71,7 @@ const Assets = () => {
           <h3 className={styles.title}>Assets ({boardAssets.length})</h3>
           <ul className={styles.assetsContainer}>
             {boardAssets.map(
-              ({ assets, assetId, displayName, duration, ext, id }) => {
+              ({ assets, assetId, displayName, duration, ext }) => {
                 return (
                   <AssetItem
                     duration={duration}

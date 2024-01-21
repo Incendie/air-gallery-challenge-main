@@ -1,6 +1,7 @@
 export interface Clip {
   id: string;
   accountId: string;
+  displayName: string;
   workspaceId: string;
   workspaceImage: string;
   workspaceName: string;
