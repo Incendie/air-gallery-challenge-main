@@ -1,8 +1,9 @@
 import Gallery from "../Gallery";
+import styles from "./Main.module.scss";
 
 const Main = () => {
   return (
-    <main>
+    <main className={styles.main}>
       <Gallery />
     </main>
   );

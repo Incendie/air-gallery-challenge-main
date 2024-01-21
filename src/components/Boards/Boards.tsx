@@ -1,7 +1,7 @@
 "use client";
 import { Board, fetchBoards } from "@/app/api/boards";
 import { useEffect, useState } from "react";
-import GalleryItem from "../GalleryItem";
+import BoardItem from "./components/BoardItem";
 import styles from "./Boards.module.scss";
 
 const Boards = () => {
@@ -24,10 +24,10 @@ const Boards = () => {
           <h3 className={styles.title}>Boards ({boards.length})</h3>
           <ul className={styles.boardsContainer}>
             {boards.map(({ id, thumbnails, title }) => (
-              <GalleryItem
+              <BoardItem
                 key={id}
                 id={id}
-                thumbnails={thumbnails ?? []}
+                thumbnail={thumbnails?.[0] ?? ""}
                 title={title}
               />
             ))}
