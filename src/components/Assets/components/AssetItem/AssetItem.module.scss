@@ -1,4 +1,4 @@
-.imgContainer {
+.mediaContainer {
   height: 204px;
   min-width: 190px;
   border-radius: 4px;
@@ -9,7 +9,7 @@
   overflow: hidden;
   cursor: pointer;
 
-  img {
+  img, video {
     object-fit: cover;
     width: 100%;
     height: 100%;

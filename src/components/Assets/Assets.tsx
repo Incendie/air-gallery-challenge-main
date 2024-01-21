@@ -1,25 +1,64 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AssetItem from "./components/AssetItem";
 import styles from "./Assets.module.scss";
 import { Clip, fetchAssets } from "@/app/api/clips";
 
 const Assets = () => {
-  const [boardAssets, setBoardAssets] = useState<Clip[]>();
+  const bottomRef = useRef(null);
+  const [boardAssets, setBoardAssets] = useState<Clip[]>([]);
+  const [cursor, setCursor] = useState<string>();
   const [total, setTotal] = useState<number>(0);
+  const [isBottomVisible, setIsBottomVisible] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const getAssets = useCallback(
+    async (cursor: string | null) => {
+      console.log({ isFetching });
+      if (!isFetching) {
+        const { data, pagination } = await fetchAssets({ cursor });
+        setIsFetching(false);
+        console.log({ data, pagination, cursor });
+        if (data?.total) {
+          setBoardAssets(prev => [...prev, ...data.clips]);
+          setTotal(data.total);
+        }
+
+        if (pagination) setCursor(pagination.cursor ?? "");
+      }
+    },
+    [isFetching]
+  );
 
   useEffect(() => {
-    const getAssets = async () => {
-      const { data } = await fetchAssets({ cursor: null });
-      console.log({ data }, data.clips[0]);
-      if (data) {
-        setBoardAssets(data.clips);
-        setTotal(data.total);
-      }
-    };
+    console.log(boardAssets.length);
+    if (isBottomVisible && cursor && total) {
+      console.log("get", { cursor });
+      setIsFetching(true);
+      getAssets(cursor);
+    } else if (!boardAssets.length) {
+      console.log("init fetch");
+      setIsFetching(true);
+      getAssets(null);
+    }
+  }, [boardAssets.length, cursor, getAssets, isBottomVisible, total]);
 
-    getAssets();
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      console.log(entry);
+      setIsBottomVisible(entry.isVisible);
+    });
+
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    console.log("boardAssets.length", boardAssets.length);
+  }, [boardAssets.length]);
 
   return (
     <div className="Assets">
@@ -28,19 +67,22 @@ const Assets = () => {
           <h3 className={styles.title}>Assets ({boardAssets.length})</h3>
           <ul className={styles.assetsContainer}>
             {boardAssets.map(
-              ({ assets, assetId, displayName, duration, ext, id }) => (
-                <AssetItem
-                  duration={duration}
-                  key={assetId}
-                  id={id}
-                  isVideo={ext === "mp4"}
-                  thumbnail={assets.image}
-                  title={displayName}
-                  hover
-                />
-              )
+              ({ assets, assetId, displayName, duration, ext, id }) => {
+                return (
+                  <AssetItem
+                    duration={duration}
+                    key={assetId}
+                    isVideo={ext === "mp4"}
+                    previewVideo={assets.previewVideo}
+                    thumbnail={assets.image}
+                    title={displayName}
+                    hover
+                  />
+                );
+              }
             )}
           </ul>
+          <div ref={bottomRef} />
         </div>
       )}
     </div>

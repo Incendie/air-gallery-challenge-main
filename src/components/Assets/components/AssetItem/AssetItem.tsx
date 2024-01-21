@@ -1,24 +1,23 @@
-import Image from "next/image";
 import styles from "./AssetItem.module.scss";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 interface IAssetItem {
   duration?: number;
-  hover?: boolean;
   id: string;
   isVideo: boolean;
+  previewVideo: string;
   thumbnail: string;
   title: string;
 }
 
 const AssetItem = ({
   duration = 0,
-  hover,
-  id,
   isVideo,
+  previewVideo,
   thumbnail,
   title,
 }: IAssetItem) => {
+  const [isHovered, setIsHovered] = useState(false);
   const videoLength = useMemo(() => {
     const minutes = Math.floor(duration / 60) ?? 0;
     const seconds = Math.floor(duration % 60) ?? 0;
@@ -29,9 +28,21 @@ const AssetItem = ({
   }, [duration]);
 
   return (
-    <li key={id} className={styles.container}>
-      <div className={styles.imgContainer}>
-        <img src={thumbnail} alt="gallery thumbnail" />
+    <li
+      className={styles.container}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className={styles.mediaContainer}>
+        {(!isHovered || !isVideo) && (
+          <img src={thumbnail} alt="gallery thumbnail" />
+        )}
+        {isHovered && isVideo && (
+          <video autoPlay loop>
+            <source src={previewVideo} type="video/mp4" />
+          </video>
+        )}
+
         <div className={styles.overlay}>
           <h4>{title}</h4>
         </div>
