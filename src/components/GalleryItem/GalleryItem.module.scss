@@ -1,0 +1,31 @@
+.imgContainer {
+  height: 204px;
+  width: 204px;
+  border-radius: 4px;
+  position: relative;
+
+  img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+  }
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 4px;
+
+  
+  h4 {
+    color: white;
+    font-size: 1.25rem;
+    padding: 75% 12px 12px 12px;
+    font-weight: 400;
+  }
+}

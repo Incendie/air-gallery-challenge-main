@@ -1,0 +1,12 @@
+.title {
+  text-transform: uppercase;
+  color: #666;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.boardsContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
