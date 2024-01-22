@@ -9,7 +9,6 @@ interface IGalleryItem {
 }
 
 const BoardItem = ({ hover, id, thumbnail, title }: IGalleryItem) => {
-  // const boardTitles = [Brand Guidelines]
   return (
     <li key={id} className={styles.container}>
       <div className={styles.imgContainer}>
